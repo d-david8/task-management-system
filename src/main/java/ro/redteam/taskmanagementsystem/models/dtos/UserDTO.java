@@ -11,5 +11,5 @@ public class UserDTO implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
-    private Integer taskId;
+    private Long taskId;
 }

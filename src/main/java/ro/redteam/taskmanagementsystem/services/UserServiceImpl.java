@@ -2,6 +2,7 @@ package ro.redteam.taskmanagementsystem.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ro.redteam.taskmanagementsystem.exceptions.EmailExistsException;
 import ro.redteam.taskmanagementsystem.exceptions.EmptyInputException;
@@ -27,14 +28,13 @@ public class UserServiceImpl implements UserService {
             throw new EmptyInputException("Filed empty");
         }
 
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new EmailExistsException("Invalid Input");
+        try {
+            userDTO.setTaskId(null);
+            User userEntity = objectMapper.convertValue(userDTO, User.class);
+            User userResponseEntity = userRepository.save(userEntity);
+            return objectMapper.convertValue(userResponseEntity, UserDTO.class);
+        } catch (DataIntegrityViolationException e) {
+            throw new EmailExistsException("Invalid email");
         }
-
-        userDTO.setTaskId(null);
-
-        User userEntity = objectMapper.convertValue(userDTO, User.class);
-        User userResponseEntity = userRepository.save(userEntity);
-        return objectMapper.convertValue(userResponseEntity, UserDTO.class);
     }
 }
