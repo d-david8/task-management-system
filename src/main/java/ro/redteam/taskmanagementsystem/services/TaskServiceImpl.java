@@ -2,6 +2,7 @@ package ro.redteam.taskmanagementsystem.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+import ro.redteam.taskmanagementsystem.enums.Status;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
 import ro.redteam.taskmanagementsystem.models.entities.Task;
 import ro.redteam.taskmanagementsystem.repositories.TaskRepository;
@@ -20,9 +21,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDTO createTask(TaskDTO taskDTO) {
 
-        taskDTO.setStatus(null);
+        taskDTO.setStatus(Status.TODO);
+        taskDTO.setProgress(0);
         Task taskEntity = objectMapper.convertValue(taskDTO, Task.class);
-
         Task taskResponseEntity = taskRepository.save(taskEntity);
 
         return objectMapper.convertValue(taskResponseEntity, TaskDTO.class);
