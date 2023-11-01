@@ -32,6 +32,11 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>(objectToString(Map.of("message", emptyInputException.getMessage())), BAD_REQUEST);
     }
 
+    @ExceptionHandler(InvalidUserIdOrTaskIdException.class)
+    public ResponseEntity<String> invalidUserIdOrTaskIdException(InvalidUserIdOrTaskIdException invalidUserIdOrTaskIdException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", invalidUserIdOrTaskIdException.getMessage())), BAD_REQUEST);
+    }
+
     private String objectToString(Object response) {
         try {
             return objectMapper.writeValueAsString(response);
