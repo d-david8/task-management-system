@@ -7,6 +7,7 @@ import ro.redteam.taskmanagementsystem.enums.Priority;
 import ro.redteam.taskmanagementsystem.enums.Status;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -29,4 +30,8 @@ public class Task {
     private Status status;
     @Column(name = "progress")
     private int progress;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
 }
