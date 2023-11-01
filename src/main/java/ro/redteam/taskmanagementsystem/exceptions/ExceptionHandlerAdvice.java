@@ -22,9 +22,9 @@ public class ExceptionHandlerAdvice {
         this.objectMapper = objectMapper;
     }
 
-    @ExceptionHandler(EmailExistsException.class)
-    public ResponseEntity<String> emailExistException(EmailExistsException emailExistException) {
-        return new ResponseEntity<>(objectToString(Map.of("message", emailExistException.getMessage())), CONFLICT);
+    @ExceptionHandler(DataExistsException.class)
+    public ResponseEntity<String> dataExistException(DataExistsException dataExistException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", dataExistException.getMessage())), CONFLICT);
     }
 
     @ExceptionHandler(EmptyInputException.class)

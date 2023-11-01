@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import ro.redteam.taskmanagementsystem.exceptions.EmailExistsException;
+import ro.redteam.taskmanagementsystem.exceptions.DataExistsException;
 import ro.redteam.taskmanagementsystem.exceptions.EmptyInputException;
 import ro.redteam.taskmanagementsystem.models.dtos.UserDTO;
 import ro.redteam.taskmanagementsystem.models.entities.User;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
             User userResponseEntity = userRepository.save(userEntity);
             return objectMapper.convertValue(userResponseEntity, UserDTO.class);
         } catch (DataIntegrityViolationException e) {
-            throw new EmailExistsException("Invalid email");
+            throw new DataExistsException("Invalid email");
         }
     }
 }

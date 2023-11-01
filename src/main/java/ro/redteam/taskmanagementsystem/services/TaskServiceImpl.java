@@ -1,8 +1,11 @@
 package ro.redteam.taskmanagementsystem.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ro.redteam.taskmanagementsystem.enums.Status;
+import ro.redteam.taskmanagementsystem.exceptions.DataExistsException;
+import ro.redteam.taskmanagementsystem.exceptions.EmptyInputException;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
 import ro.redteam.taskmanagementsystem.models.entities.Task;
 import ro.redteam.taskmanagementsystem.repositories.TaskRepository;
@@ -20,12 +23,19 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDTO createTask(TaskDTO taskDTO) {
+        if (taskDTO.getTitle().isEmpty() || taskDTO.getDescription().isEmpty()) {
+            throw new EmptyInputException("Filed empty");
+        }
 
-        taskDTO.setStatus(Status.TODO);
-        taskDTO.setProgress(0);
-        Task taskEntity = objectMapper.convertValue(taskDTO, Task.class);
-        Task taskResponseEntity = taskRepository.save(taskEntity);
+        try {
+            taskDTO.setStatus(Status.TODO);
+            taskDTO.setProgress(0);
+            Task taskEntity = objectMapper.convertValue(taskDTO, Task.class);
+            Task taskResponseEntity = taskRepository.save(taskEntity);
 
-        return objectMapper.convertValue(taskResponseEntity, TaskDTO.class);
+            return objectMapper.convertValue(taskResponseEntity, TaskDTO.class);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataExistsException("Invalid title");
+        }
     }
 }

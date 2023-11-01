@@ -3,6 +3,8 @@ package ro.redteam.taskmanagementsystem.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
@@ -19,4 +21,10 @@ public class User {
     private String email;
     @Column(name = "task_id")
     private Long taskId;
+
+    @OneToOne(mappedBy = "user")
+    private Task task;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 }
