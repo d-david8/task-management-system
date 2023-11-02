@@ -31,7 +31,10 @@ public class Task {
     @Column(name = "progress")
     private int progress;
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
-
 }
