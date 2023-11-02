@@ -12,6 +12,7 @@ import ro.redteam.taskmanagementsystem.models.entities.User;
 import ro.redteam.taskmanagementsystem.repositories.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -43,12 +44,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(Long id) {
-        if(userRepository.existsById(id)){
-            return  objectMapper.convertValue(userRepository.findById(id), UserDTO.class);
-        }else{
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return objectMapper.convertValue(user, UserDTO.class);
+        } else {
             throw new UserNotFoundException("User does not exist!");
         }
     }
+
 
     @Override
     public List<UserDTO> getAllUsers() {
@@ -60,30 +64,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String deleteUserById(Long id) {
-        if(userRepository.existsById(id)){
+        if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
-            return  "User deleted successfully!";
-        }else{
+            return "User deleted successfully!";
+        } else {
             throw new UserNotFoundException("User does not exist!");
         }
     }
 
     @Override
     public UserDTO updateUserById(Long id, UserDTO newUserDTO) {
-        if(userRepository.existsById(id)){
-            User user = userRepository.findById(id).get();
-            if (newUserDTO.getEmail().isEmpty() || newUserDTO.getFirstName().isEmpty() || newUserDTO.getLastName().isEmpty()) {
-                throw new EmptyInputException("Filed empty");
-            }try {
-                user.setFirstName(newUserDTO.getFirstName());
-                user.setLastName(newUserDTO.getLastName());
-                user.setEmail(newUserDTO.getEmail());
-                //user.setTaskId(newUserDTO.getTaskId()); ~?
-                return objectMapper.convertValue(userRepository.save(user), UserDTO.class);
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            try {
+                if (!newUserDTO.getFirstName().isEmpty()) {
+                    user.setFirstName(newUserDTO.getFirstName());
+                }
+                if (!newUserDTO.getLastName().isEmpty()) {
+                    user.setLastName(newUserDTO.getLastName());
+                }
+                if (!newUserDTO.getEmail().isEmpty()) {
+                    user.setEmail(newUserDTO.getEmail());
+                }
+                userRepository.save(user);
+                return objectMapper.convertValue(user, UserDTO.class);
             } catch (DataIntegrityViolationException e) {
                 throw new EmailExistsException("Invalid email");
             }
-        }else{
+        } else {
             throw new UserNotFoundException("User does not exist!");
         }
     }

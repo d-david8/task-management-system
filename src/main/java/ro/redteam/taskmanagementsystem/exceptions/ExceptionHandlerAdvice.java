@@ -33,8 +33,9 @@ public class ExceptionHandlerAdvice {
 
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> userNotFoundException(UserNotFoundException userNotFoundException){
-        return new ResponseEntity<>(objectToString(Map.of("message" , userNotFoundException.getMessage())), NOT_FOUND);
+    public ResponseEntity<String> userNotFoundException(UserNotFoundException userNotFoundException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", userNotFoundException.getMessage())), NOT_FOUND);
+    }
 
     @ExceptionHandler(InvalidUserIdOrTaskIdException.class)
     public ResponseEntity<String> invalidUserIdOrTaskIdException(InvalidUserIdOrTaskIdException invalidUserIdOrTaskIdException) {

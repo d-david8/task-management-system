@@ -25,22 +25,22 @@ public class UserController {
     }
 
     @GetMapping("/api/users/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id){
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping("/api/users")
-    public ResponseEntity<List<UserDTO>> getAllUsers(){
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @DeleteMapping("/api/users/{id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long id){
-        return  ResponseEntity.ok(userService.deleteUserById(id));
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.deleteUserById(id));
     }
 
     @PatchMapping("/api/users/{id}")
-    public ResponseEntity<UserDTO> editUserById (@PathVariable Long id, @RequestBody UserDTO userDTO){
-        return ResponseEntity.ok(userService.updateUserById(id,userDTO));
+    public ResponseEntity<UserDTO> editUserById(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(userService.updateUserById(id, userDTO));
     }
 }
