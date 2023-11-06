@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(user);
                 return objectMapper.convertValue(user, UserDTO.class);
             } catch (DataIntegrityViolationException e) {
-                throw new EmailExistsException("Invalid email");
+                throw new DataExistsException("Invalid email");
             }
         } else {
             throw new UserNotFoundException("User does not exist!");
