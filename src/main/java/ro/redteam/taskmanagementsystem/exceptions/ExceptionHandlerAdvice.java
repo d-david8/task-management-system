@@ -43,6 +43,11 @@ public class ExceptionHandlerAdvice {
 
     }
 
+    @ExceptionHandler(NoTaskFoundException.class)
+    public ResponseEntity<String> noTaskFoundException(NoTaskFoundException noTaskFoundException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", noTaskFoundException.getMessage())), NOT_FOUND);
+    }
+
     private String objectToString(Object response) {
         try {
             return objectMapper.writeValueAsString(response);
