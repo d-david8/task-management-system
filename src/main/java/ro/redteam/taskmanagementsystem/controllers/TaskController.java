@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.TaskResponseDTO;
 import ro.redteam.taskmanagementsystem.services.TaskService;
-
 
 import java.util.Date;
 import java.util.List;
@@ -30,16 +30,16 @@ public class TaskController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable Long id) {
         return ResponseEntity.ok(taskService.getTaskById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> getAllTasks() {
+    public ResponseEntity<List<TaskResponseDTO>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
-      
-    @GetMapping
+
+    @GetMapping("/byDueDate")
     public ResponseEntity<List<TaskDTO>> getTasksByDueDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dueDate) {
         return ResponseEntity.ok(taskService.getTasksByDueDate(dueDate));

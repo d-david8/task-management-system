@@ -5,6 +5,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ro.redteam.taskmanagementsystem.exceptions.InvalidUserIdOrTaskIdException;
 import ro.redteam.taskmanagementsystem.models.dtos.CommentDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.UserDTO;
 import ro.redteam.taskmanagementsystem.models.entities.Comment;
 import ro.redteam.taskmanagementsystem.models.entities.Task;
 import ro.redteam.taskmanagementsystem.models.entities.User;
@@ -23,16 +25,19 @@ public class CommentServiceImpl implements CommentService {
         this.commentRepository = commentRepository;
     }
 
+
     @Override
     public CommentDTO addComment(CommentDTO commentDTO) {
         try {
-            Comment commentEntity = objectMapper.convertValue(commentDTO, Comment.class);
+            Comment commentEntity = new Comment();
+
+            commentEntity.setMessage(commentDTO.getMessage());
 
             User user = new User();
-            user.setId(commentDTO.getUserId());
+            user.setId(commentDTO.getUser().getId());
 
             Task task = new Task();
-            task.setId(commentDTO.getTaskId());
+            task.setId(commentDTO.getTask().getId());
 
             commentEntity.setUser(user);
             commentEntity.setTask(task);
@@ -40,11 +45,15 @@ public class CommentServiceImpl implements CommentService {
             commentEntity.setCreatedAt(LocalDateTime.now());
 
             Comment responseEntity = commentRepository.save(commentEntity);
-            CommentDTO responseDTO = objectMapper.convertValue(responseEntity, CommentDTO.class);
-            responseDTO.setTaskId(responseEntity.getTask().getId());
-            responseDTO.setUserId(responseEntity.getUser().getId());
 
-            return responseDTO;
+            CommentDTO responseCommentDTO = new CommentDTO();
+            responseCommentDTO.setMessage(responseEntity.getMessage());
+            responseCommentDTO.setId(responseEntity.getId());
+            responseCommentDTO.setCreatedAt(responseEntity.getCreatedAt());
+            responseCommentDTO.setUser(objectMapper.convertValue(responseEntity.getUser(), UserDTO.class));
+            responseCommentDTO.setTask(objectMapper.convertValue(responseEntity.getTask(), TaskDTO.class));
+
+            return responseCommentDTO;
 
         } catch (DataIntegrityViolationException exception) {
             System.out.println(exception.getMessage());

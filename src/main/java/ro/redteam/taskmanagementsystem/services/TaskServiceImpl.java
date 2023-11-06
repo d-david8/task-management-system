@@ -5,18 +5,18 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ro.redteam.taskmanagementsystem.enums.Status;
 import ro.redteam.taskmanagementsystem.exceptions.DataExistsException;
-import ro.redteam.taskmanagementsystem.exceptions.EmptyInputException;
-
 import ro.redteam.taskmanagementsystem.exceptions.DataNotFoundException;
+import ro.redteam.taskmanagementsystem.exceptions.EmptyInputException;
 import ro.redteam.taskmanagementsystem.exceptions.NoTaskFoundException;
+import ro.redteam.taskmanagementsystem.models.dtos.CommentTaskResponseDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.TaskResponseDTO;
 import ro.redteam.taskmanagementsystem.models.entities.Task;
 import ro.redteam.taskmanagementsystem.repositories.TaskRepository;
 
-
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Date;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -34,7 +34,6 @@ public class TaskServiceImpl implements TaskService {
         if (taskDTO.getTitle().isEmpty() || taskDTO.getDescription().isEmpty()) {
             throw new EmptyInputException("Filed empty");
         }
-
         try {
             taskDTO.setStatus(Status.TODO);
             taskDTO.setProgress(0);
@@ -49,32 +48,51 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
 
-    public TaskDTO getTaskById(Long id) {
+    public TaskResponseDTO getTaskById(Long id) {
         Optional<Task> taskOptional = taskRepository.findById(id);
         if (taskOptional.isPresent()) {
             Task task = taskOptional.get();
-            return objectMapper.convertValue(task, TaskDTO.class);
+            return mapTaskToTaskResponseDTO(task);
         } else {
             throw new DataNotFoundException("Task does not exist");
         }
     }
 
     @Override
-    public List<TaskDTO> getAllTasks() {
+    public List<TaskResponseDTO> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
-        return tasks.stream()
-                .map(task -> objectMapper.convertValue(task, TaskDTO.class))
-                .toList();
+        return tasks.stream().map(this::mapTaskToTaskResponseDTO).toList();
     }
 
     public List<TaskDTO> getTasksByDueDate(Date dueDate) {
         List<Task> tasksByDueDate = taskRepository.getTasksByDueDate(dueDate);
         if (!tasksByDueDate.isEmpty()) {
-            return tasksByDueDate.stream()
-                    .map(task -> objectMapper.convertValue(task, TaskDTO.class))
-                    .toList();
+            return tasksByDueDate.stream().map(task -> objectMapper.convertValue(task, TaskDTO.class)).toList();
         } else {
             throw new NoTaskFoundException("No task with this due date exists!");
         }
+    }
+
+    private TaskResponseDTO mapTaskToTaskResponseDTO(Task task) {
+        TaskResponseDTO taskResponseDTO = new TaskResponseDTO();
+
+        taskResponseDTO.setId(task.getId());
+        taskResponseDTO.setProgress(task.getProgress());
+        taskResponseDTO.setStatus(task.getStatus());
+        taskResponseDTO.setDescription(task.getDescription());
+        taskResponseDTO.setTitle(task.getTitle());
+        taskResponseDTO.setPriority(task.getPriority());
+        taskResponseDTO.setDueDate(task.getDueDate());
+        taskResponseDTO.setUserId(task.getUser() == null ? null : task.getUser().getId());
+
+        taskResponseDTO.setComments(task.getComments().stream().map(comment -> {
+            CommentTaskResponseDTO commentTaskResponseDTO = new CommentTaskResponseDTO();
+            commentTaskResponseDTO.setId(comment.getId());
+            commentTaskResponseDTO.setCreatedAt(comment.getCreatedAt());
+            commentTaskResponseDTO.setMessage(comment.getMessage());
+            commentTaskResponseDTO.setUserId(comment.getUser().getId());
+            return commentTaskResponseDTO;
+        }).toList());
+        return taskResponseDTO;
     }
 }
