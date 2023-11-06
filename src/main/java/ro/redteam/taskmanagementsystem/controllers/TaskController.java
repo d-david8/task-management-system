@@ -37,6 +37,7 @@ public class TaskController {
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAllTasks() {
         return ResponseEntity.ok(taskService.getAllTasks());
+    }
       
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getTasksByDueDate(
