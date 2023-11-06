@@ -6,7 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ro.redteam.taskmanagementsystem.exceptions.DataExistsException;
 import ro.redteam.taskmanagementsystem.exceptions.EmptyInputException;
-import ro.redteam.taskmanagementsystem.exceptions.UserNotFoundException;
+import ro.redteam.taskmanagementsystem.exceptions.DataNotFoundException;
 import ro.redteam.taskmanagementsystem.models.dtos.UserDTO;
 import ro.redteam.taskmanagementsystem.models.entities.User;
 import ro.redteam.taskmanagementsystem.repositories.UserRepository;
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
             User user = userOptional.get();
             return objectMapper.convertValue(user, UserDTO.class);
         } else {
-            throw new UserNotFoundException("User does not exist!");
+            throw new DataNotFoundException("User does not exist!");
         }
     }
 
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteById(id);
             return "User deleted successfully!";
         } else {
-            throw new UserNotFoundException("User does not exist!");
+            throw new DataNotFoundException("User does not exist!");
         }
     }
 
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
                 throw new DataExistsException("Invalid email");
             }
         } else {
-            throw new UserNotFoundException("User does not exist!");
+            throw new DataNotFoundException("User does not exist!");
         }
     }
 }
