@@ -5,11 +5,10 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class CommentDTO {
+public class CommentUserResponseDTO {
 
     private Long id;
     private String message;
     private LocalDateTime createdAt;
-    private UserDTO user;
-    private TaskDTO task;
+    private Long taskId;
 }

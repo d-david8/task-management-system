@@ -19,8 +19,6 @@ public class User {
     private String lastName;
     @Column(name = "email", unique = true)
     private String email;
-    @Column(name = "task_id")
-    private Long taskId;
 
     @OneToOne(mappedBy = "user")
     private Task task;

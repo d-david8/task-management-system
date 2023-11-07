@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class TaskDTO {
+public class TaskResponseDTO {
 
     private Long id;
     private String title;
@@ -19,6 +19,6 @@ public class TaskDTO {
     private Priority priority;
     private Status status;
     private int progress;
-    private UserDTO user;
-    private List<CommentDTO> comments;
+    private Long userId;
+    private List<CommentTaskResponseDTO> comments;
 }

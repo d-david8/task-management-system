@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ro.redteam.taskmanagementsystem.exceptions.DataExistsException;
-import ro.redteam.taskmanagementsystem.exceptions.EmptyInputException;
 import ro.redteam.taskmanagementsystem.exceptions.DataNotFoundException;
+import ro.redteam.taskmanagementsystem.exceptions.EmptyInputException;
+import ro.redteam.taskmanagementsystem.models.dtos.CommentUserResponseDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.UserDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.UserResponseDTO;
 import ro.redteam.taskmanagementsystem.models.entities.User;
 import ro.redteam.taskmanagementsystem.repositories.UserRepository;
 
@@ -33,7 +35,6 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-            userDTO.setTaskId(null);
             User userEntity = objectMapper.convertValue(userDTO, User.class);
             User userResponseEntity = userRepository.save(userEntity);
             return objectMapper.convertValue(userResponseEntity, UserDTO.class);
@@ -43,23 +44,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(Long id) {
+    public UserResponseDTO getUserById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            return objectMapper.convertValue(user, UserDTO.class);
+            return mapUserToUserResponseDTO(user);
         } else {
             throw new DataNotFoundException("User does not exist!");
         }
     }
 
-
     @Override
-    public List<UserDTO> getAllUsers() {
+    public List<UserResponseDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> objectMapper.convertValue(user, UserDTO.class))
-                .toList();
+        return users.stream().map(this::mapUserToUserResponseDTO).toList();
     }
 
     @Override
@@ -95,5 +93,27 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new DataNotFoundException("User does not exist!");
         }
+    }
+
+    private UserResponseDTO mapUserToUserResponseDTO(User user) {
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+
+        userResponseDTO.setId(user.getId());
+        userResponseDTO.setFirstName(user.getFirstName());
+        userResponseDTO.setLastName(user.getLastName());
+        userResponseDTO.setEmail(user.getEmail());
+        userResponseDTO.setCurrentTask(user.getTask() == null ? null : user.getTask().getId());
+
+        userResponseDTO.setComments(user.getComments().stream()
+                .map(comment -> {
+                    CommentUserResponseDTO commentUserResponseDTO = new CommentUserResponseDTO();
+                    commentUserResponseDTO.setId(comment.getId());
+                    commentUserResponseDTO.setMessage(comment.getMessage());
+                    commentUserResponseDTO.setCreatedAt(comment.getCreatedAt());
+                    commentUserResponseDTO.setCreatedAt(comment.getCreatedAt());
+                    commentUserResponseDTO.setTaskId(comment.getTask().getId());
+                    return commentUserResponseDTO;
+                }).toList());
+        return userResponseDTO;
     }
 }
