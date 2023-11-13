@@ -44,4 +44,9 @@ public class TaskController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dueDate) {
         return ResponseEntity.ok(taskService.getTasksByDueDate(dueDate));
     }
+
+    @PatchMapping("/{taskId}/{userId}")
+    public ResponseEntity<TaskResponseDTO> assignTaskToUser(@PathVariable Long taskId, @PathVariable Long userId) {
+        return ResponseEntity.ok(taskService.assignTaskById(taskId, userId));
+    }
 }

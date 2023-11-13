@@ -13,6 +13,8 @@ public interface TaskService {
     TaskResponseDTO getTaskById(Long id);
 
     List<TaskResponseDTO> getAllTasks();
-  
+
     List<TaskDTO> getTasksByDueDate(Date dueDate);
+
+    TaskResponseDTO assignTaskById(Long taskId, Long userId);
 }
