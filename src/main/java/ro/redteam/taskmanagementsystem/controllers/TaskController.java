@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskResponseDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.UpdateProgressRequestDTO;
 import ro.redteam.taskmanagementsystem.services.TaskService;
 
 import java.util.Date;
@@ -43,5 +44,15 @@ public class TaskController {
     public ResponseEntity<List<TaskDTO>> getTasksByDueDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dueDate) {
         return ResponseEntity.ok(taskService.getTasksByDueDate(dueDate));
+    }
+
+    @PutMapping("/updateProgress")
+    public ResponseEntity<TaskResponseDTO> updateProgress(@RequestBody UpdateProgressRequestDTO updateProgressRequestDTO) {
+        return ResponseEntity.ok(taskService.updateProgress(updateProgressRequestDTO));
+    }
+
+    @PutMapping("updateToDone/{taskId}")
+    public ResponseEntity<TaskResponseDTO> updateProgress(@PathVariable Long taskId) {
+        return ResponseEntity.ok(taskService.updateTaskToDone(taskId));
     }
 }
