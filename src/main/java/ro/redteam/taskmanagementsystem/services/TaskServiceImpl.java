@@ -8,6 +8,7 @@ import ro.redteam.taskmanagementsystem.exceptions.*;
 import ro.redteam.taskmanagementsystem.models.dtos.CommentTaskResponseDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskResponseDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.UpdateProgressRequestDTO;
 import ro.redteam.taskmanagementsystem.models.entities.Task;
 import ro.redteam.taskmanagementsystem.models.entities.User;
 import ro.redteam.taskmanagementsystem.repositories.TaskRepository;
@@ -97,6 +98,41 @@ public class TaskServiceImpl implements TaskService {
         } catch (DataIntegrityViolationException exception) {
             throw new DataNotFoundException("Invalid data!");
         }
+
+    @Override
+    public TaskResponseDTO updateProgress(UpdateProgressRequestDTO updateProgressRequestDTO) {
+        int progress = updateProgressRequestDTO.getProgress();
+        Long taskId = updateProgressRequestDTO.getTaskId();
+        if (progress < 0 || progress > 100) {
+            throw new InvalidDataException("The progress should be between [0,100]");
+        }
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+        if (taskOptional.isEmpty()) {
+            throw new DataNotFoundException("Invalid task id!");
+        }
+        Task taskEntity = taskOptional.get();
+        taskEntity.setProgress(progress);
+
+        if (progress == 0) {
+            taskEntity.setStatus(Status.TODO);
+        } else if (progress == 100) {
+            taskEntity.setStatus(Status.DONE);
+        } else {
+            taskEntity.setStatus(Status.IN_PROGRESS);
+        }
+        return mapTaskToTaskResponseDTO(taskRepository.save(taskEntity));
+    }
+
+    @Override
+    public TaskResponseDTO updateTaskToDone(Long taskId) {
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+        if (taskOptional.isEmpty()) {
+            throw new DataNotFoundException("Invalid task id!");
+        }
+        Task taskEntity = taskOptional.get();
+        taskEntity.setProgress(100);
+        taskEntity.setStatus(Status.DONE);
+        return mapTaskToTaskResponseDTO(taskRepository.save(taskEntity));
     }
 
     private TaskResponseDTO mapTaskToTaskResponseDTO(Task task) {

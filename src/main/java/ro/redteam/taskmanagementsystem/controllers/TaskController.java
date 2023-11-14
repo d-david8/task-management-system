@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskResponseDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.UpdateProgressRequestDTO;
 import ro.redteam.taskmanagementsystem.services.TaskService;
 
 import java.util.Date;
@@ -48,5 +49,14 @@ public class TaskController {
     @PatchMapping("/{taskId}/{userId}")
     public ResponseEntity<TaskResponseDTO> assignTaskToUser(@PathVariable Long taskId, @PathVariable Long userId) {
         return ResponseEntity.ok(taskService.assignTaskById(taskId, userId));
+
+    @PutMapping("/updateProgress")
+    public ResponseEntity<TaskResponseDTO> updateProgress(@RequestBody UpdateProgressRequestDTO updateProgressRequestDTO) {
+        return ResponseEntity.ok(taskService.updateProgress(updateProgressRequestDTO));
+    }
+
+    @PutMapping("updateToDone/{taskId}")
+    public ResponseEntity<TaskResponseDTO> updateProgress(@PathVariable Long taskId) {
+        return ResponseEntity.ok(taskService.updateTaskToDone(taskId));
     }
 }
