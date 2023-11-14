@@ -48,6 +48,11 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>(objectToString(Map.of("message", noTaskFoundException.getMessage())), NOT_FOUND);
     }
 
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<String> invalidDataException(InvalidDataException invalidDataException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", invalidDataException.getMessage())), BAD_REQUEST);
+    }
+
     private String objectToString(Object response) {
         try {
             return objectMapper.writeValueAsString(response);
