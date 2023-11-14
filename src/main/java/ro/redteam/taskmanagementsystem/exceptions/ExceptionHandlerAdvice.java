@@ -47,6 +47,10 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<String> noTaskFoundException(NoTaskFoundException noTaskFoundException) {
         return new ResponseEntity<>(objectToString(Map.of("message", noTaskFoundException.getMessage())), NOT_FOUND);
     }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> userNotFoundException(UserNotFoundException userNotFoundException) {
+        return new ResponseEntity<>(objectToString(Map.of("message", userNotFoundException.getMessage())), NOT_FOUND);
+    }
 
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<String> invalidDataException(InvalidDataException invalidDataException) {

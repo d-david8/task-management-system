@@ -12,6 +12,6 @@ public class UserDTO implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
-    private TaskDTO taskID;
+    private TaskDTO task;
     private List<CommentDTO> comments;
 }

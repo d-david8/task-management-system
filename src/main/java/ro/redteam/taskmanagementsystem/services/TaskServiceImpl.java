@@ -10,7 +10,9 @@ import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskResponseDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.UpdateProgressRequestDTO;
 import ro.redteam.taskmanagementsystem.models.entities.Task;
+import ro.redteam.taskmanagementsystem.models.entities.User;
 import ro.redteam.taskmanagementsystem.repositories.TaskRepository;
+import ro.redteam.taskmanagementsystem.repositories.UserRepository;
 
 import java.util.Date;
 import java.util.List;
@@ -20,10 +22,12 @@ import java.util.Optional;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
-    public TaskServiceImpl(TaskRepository taskRepository, ObjectMapper objectMapper) {
+    public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository, ObjectMapper objectMapper) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -70,6 +74,30 @@ public class TaskServiceImpl implements TaskService {
             throw new NoTaskFoundException("No task with this due date exists!");
         }
     }
+
+    public TaskResponseDTO assignTaskById(Long taskId, Long userId) {
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+        if (taskOptional.isEmpty()) {
+            throw new NoTaskFoundException("Invalid task id!");
+        }
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("Invalid user id!");
+        }
+        try {
+            taskRepository.updateTaskUserIdToNull(userId);
+
+            Task taskEntity = taskOptional.get();
+            User newUser = new User();
+            newUser.setId(userId);
+            taskEntity.setUser(newUser);
+
+            return mapTaskToTaskResponseDTO(taskRepository.save(taskEntity));
+
+        } catch (DataIntegrityViolationException exception) {
+            throw new DataNotFoundException("Invalid data!");
+        }
 
     @Override
     public TaskResponseDTO updateProgress(UpdateProgressRequestDTO updateProgressRequestDTO) {

@@ -17,6 +17,8 @@ public interface TaskService {
 
     List<TaskDTO> getTasksByDueDate(Date dueDate);
 
+    TaskResponseDTO assignTaskById(Long taskId, Long userId);
+
     TaskResponseDTO updateProgress(UpdateProgressRequestDTO updateProgressRequestDTO);
 
     TaskResponseDTO updateTaskToDone(Long taskId);

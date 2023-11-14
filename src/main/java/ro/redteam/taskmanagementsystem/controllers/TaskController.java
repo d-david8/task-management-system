@@ -46,6 +46,10 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getTasksByDueDate(dueDate));
     }
 
+    @PatchMapping("/{taskId}/{userId}")
+    public ResponseEntity<TaskResponseDTO> assignTaskToUser(@PathVariable Long taskId, @PathVariable Long userId) {
+        return ResponseEntity.ok(taskService.assignTaskById(taskId, userId));
+
     @PutMapping("/updateProgress")
     public ResponseEntity<TaskResponseDTO> updateProgress(@RequestBody UpdateProgressRequestDTO updateProgressRequestDTO) {
         return ResponseEntity.ok(taskService.updateProgress(updateProgressRequestDTO));
