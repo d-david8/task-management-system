@@ -49,7 +49,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-
     public TaskResponseDTO getTaskById(Long id) {
         Optional<Task> taskOptional = taskRepository.findById(id);
         if (taskOptional.isPresent()) {
@@ -94,10 +93,10 @@ public class TaskServiceImpl implements TaskService {
             taskEntity.setUser(newUser);
 
             return mapTaskToTaskResponseDTO(taskRepository.save(taskEntity));
-
         } catch (DataIntegrityViolationException exception) {
             throw new DataNotFoundException("Invalid data!");
         }
+    }
 
     @Override
     public TaskResponseDTO updateProgress(UpdateProgressRequestDTO updateProgressRequestDTO) {
