@@ -29,7 +29,6 @@ public class TaskController {
         return ResponseEntity.ok(taskService.createTask(taskDTO));
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable Long id) {
         return ResponseEntity.ok(taskService.getTaskById(id));
@@ -49,6 +48,7 @@ public class TaskController {
     @PatchMapping("/{taskId}/{userId}")
     public ResponseEntity<TaskResponseDTO> assignTaskToUser(@PathVariable Long taskId, @PathVariable Long userId) {
         return ResponseEntity.ok(taskService.assignTaskById(taskId, userId));
+    }
 
     @PutMapping("/updateProgress")
     public ResponseEntity<TaskResponseDTO> updateProgress(@RequestBody UpdateProgressRequestDTO updateProgressRequestDTO) {
