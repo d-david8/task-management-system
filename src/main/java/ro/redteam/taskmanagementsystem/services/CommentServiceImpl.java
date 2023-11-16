@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ro.redteam.taskmanagementsystem.exceptions.InvalidUserIdOrTaskIdException;
 import ro.redteam.taskmanagementsystem.models.dtos.CommentDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.CommentResponseDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.TaskDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.UserDTO;
 import ro.redteam.taskmanagementsystem.models.entities.Comment;
@@ -13,51 +14,64 @@ import ro.redteam.taskmanagementsystem.models.entities.User;
 import ro.redteam.taskmanagementsystem.repositories.CommentRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
 
-    private final ObjectMapper objectMapper;
     private final CommentRepository commentRepository;
 
-    public CommentServiceImpl(ObjectMapper objectMapper, CommentRepository commentRepository) {
-        this.objectMapper = objectMapper;
+    public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
 
-
     @Override
-    public CommentDTO addComment(CommentDTO commentDTO) {
+    public CommentResponseDTO addComment(CommentResponseDTO commentResponseDTO) {
         try {
             Comment commentEntity = new Comment();
-
-            commentEntity.setMessage(commentDTO.getMessage());
-
             User user = new User();
-            user.setId(commentDTO.getUser().getId());
-
             Task task = new Task();
-            task.setId(commentDTO.getTask().getId());
 
+            user.setId(commentResponseDTO.getUserId());
+            task.setId(commentResponseDTO.getTaskId());
+
+            commentEntity.setMessage(commentResponseDTO.getMessage());
             commentEntity.setUser(user);
             commentEntity.setTask(task);
-
             commentEntity.setCreatedAt(LocalDateTime.now());
 
             Comment responseEntity = commentRepository.save(commentEntity);
 
-            CommentDTO responseCommentDTO = new CommentDTO();
-            responseCommentDTO.setMessage(responseEntity.getMessage());
-            responseCommentDTO.setId(responseEntity.getId());
-            responseCommentDTO.setCreatedAt(responseEntity.getCreatedAt());
-            responseCommentDTO.setUser(objectMapper.convertValue(responseEntity.getUser(), UserDTO.class));
-            responseCommentDTO.setTask(objectMapper.convertValue(responseEntity.getTask(), TaskDTO.class));
+            CommentResponseDTO responseDTO = new CommentResponseDTO();
 
-            return responseCommentDTO;
+            responseDTO.setId(responseEntity.getId());
+            responseDTO.setMessage(responseEntity.getMessage());
+            responseDTO.setCreatedAt(responseEntity.getCreatedAt());
+            responseDTO.setUserId(responseEntity.getUser().getId());
+            responseDTO.setTaskId(responseEntity.getTask().getId());
+
+            return responseDTO;
 
         } catch (DataIntegrityViolationException exception) {
             System.out.println(exception.getMessage());
             throw new InvalidUserIdOrTaskIdException("Task id or user id is invalid");
         }
+    }
+
+    @Override
+    public List<CommentResponseDTO> getAllComments() {
+        List<Comment> comments = commentRepository.findAll();
+        return comments.stream().map(this::mapCommentToCommentResponseDTO).toList();
+    }
+
+    private CommentResponseDTO mapCommentToCommentResponseDTO(Comment comment) {
+        CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
+
+        commentResponseDTO.setId(comment.getId());
+        commentResponseDTO.setMessage(comment.getMessage());
+        commentResponseDTO.setCreatedAt(comment.getCreatedAt());
+        commentResponseDTO.setUserId(comment.getUser().getId());
+        commentResponseDTO.setTaskId(comment.getTask().getId());
+        return commentResponseDTO;
     }
 }

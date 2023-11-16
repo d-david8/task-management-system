@@ -1,8 +1,11 @@
 package ro.redteam.taskmanagementsystem.models.dtos;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
-public class CommentResponse {
+@Data
+public class CommentResponseDTO {
     private Long id;
     private String message;
     private LocalDateTime createdAt;
