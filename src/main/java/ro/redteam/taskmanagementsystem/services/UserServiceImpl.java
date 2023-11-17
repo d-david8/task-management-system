@@ -11,6 +11,7 @@ import ro.redteam.taskmanagementsystem.models.dtos.CommentUserResponseDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.UserDTO;
 import ro.redteam.taskmanagementsystem.models.dtos.UserResponseDTO;
 import ro.redteam.taskmanagementsystem.models.entities.User;
+import ro.redteam.taskmanagementsystem.repositories.TaskRepository;
 import ro.redteam.taskmanagementsystem.repositories.UserRepository;
 
 import java.util.List;
@@ -22,10 +23,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final TaskRepository taskRepository;
 
-    public UserServiceImpl(UserRepository userRepository, ObjectMapper objectMapper) {
+    public UserServiceImpl(UserRepository userRepository, ObjectMapper objectMapper, TaskRepository taskRepository) {
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.taskRepository = taskRepository;
     }
 
     @Override
@@ -63,6 +66,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String deleteUserById(Long id) {
         if (userRepository.existsById(id)) {
+            taskRepository.updateTaskUserIdToNull(id);
             userRepository.deleteById(id);
             return "User deleted successfully!";
         } else {

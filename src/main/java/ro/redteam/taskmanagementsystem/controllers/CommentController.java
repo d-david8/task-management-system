@@ -2,14 +2,15 @@ package ro.redteam.taskmanagementsystem.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import ro.redteam.taskmanagementsystem.models.dtos.CommentDTO;
+import org.springframework.web.bind.annotation.*;
+import ro.redteam.taskmanagementsystem.models.dtos.CommentResponseDTO;
 import ro.redteam.taskmanagementsystem.services.CommentService;
+
+import java.util.List;
 
 @Validated
 @RestController
+@RequestMapping("/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -18,8 +19,13 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping("/comments")
-    public ResponseEntity<CommentDTO> addComment(@RequestBody CommentDTO commentDTO) {
-        return ResponseEntity.ok(commentService.addComment(commentDTO));
+    @PostMapping
+    public ResponseEntity<CommentResponseDTO> addComment(@RequestBody CommentResponseDTO commentResponseDTO) {
+        return ResponseEntity.ok(commentService.addComment(commentResponseDTO));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CommentResponseDTO>> getAllComments() {
+        return ResponseEntity.ok(commentService.getAllComments());
     }
 }

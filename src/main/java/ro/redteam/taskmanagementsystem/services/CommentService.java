@@ -1,7 +1,12 @@
 package ro.redteam.taskmanagementsystem.services;
 
-import ro.redteam.taskmanagementsystem.models.dtos.CommentDTO;
+import ro.redteam.taskmanagementsystem.models.dtos.CommentResponseDTO;
+
+import java.util.List;
 
 public interface CommentService {
-    public CommentDTO addComment(CommentDTO commentDTO);
+
+    CommentResponseDTO addComment(CommentResponseDTO commentResponseDTO);
+
+    List<CommentResponseDTO> getAllComments();
 }
