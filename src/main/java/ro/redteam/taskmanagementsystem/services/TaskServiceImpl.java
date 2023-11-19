@@ -65,10 +65,10 @@ public class TaskServiceImpl implements TaskService {
         return tasks.stream().map(this::mapTaskToTaskResponseDTO).toList();
     }
 
-    public List<TaskDTO> getTasksByDueDate(Date dueDate) {
+    public List<TaskResponseDTO> getTasksByDueDate(Date dueDate) {
         List<Task> tasksByDueDate = taskRepository.getTasksByDueDate(dueDate);
         if (!tasksByDueDate.isEmpty()) {
-            return tasksByDueDate.stream().map(task -> objectMapper.convertValue(task, TaskDTO.class)).toList();
+            return tasksByDueDate.stream().map(this::mapTaskToTaskResponseDTO).toList();
         } else {
             throw new NoTaskFoundException("No task with this due date exists!");
         }
@@ -135,7 +135,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String getCompetitionSummary(Long taskId) {
+    public String getCompletionSummary(Long taskId) {
         Optional<Task> taskOptional = taskRepository.findById(taskId);
         if (taskOptional.isEmpty()) {
             throw new DataNotFoundException("Invalid task id!");

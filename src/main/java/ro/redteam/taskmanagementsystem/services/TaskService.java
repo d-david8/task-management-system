@@ -15,7 +15,7 @@ public interface TaskService {
 
     List<TaskResponseDTO> getAllTasks();
 
-    List<TaskDTO> getTasksByDueDate(Date dueDate);
+    List<TaskResponseDTO> getTasksByDueDate(Date dueDate);
 
     TaskResponseDTO assignTaskById(Long taskId, Long userId);
 
@@ -23,7 +23,7 @@ public interface TaskService {
 
     TaskResponseDTO updateTaskToDone(Long taskId);
 
-    String getCompetitionSummary(Long taskId);
+    String getCompletionSummary(Long taskId);
 
     String getProgressSummary(Long taskId);
 }

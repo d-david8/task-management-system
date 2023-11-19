@@ -40,7 +40,7 @@ public class TaskController {
     }
 
     @GetMapping("/byDueDate")
-    public ResponseEntity<List<TaskDTO>> getTasksByDueDate(
+    public ResponseEntity<List<TaskResponseDTO>> getTasksByDueDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dueDate) {
         return ResponseEntity.ok(taskService.getTasksByDueDate(dueDate));
     }
@@ -60,9 +60,9 @@ public class TaskController {
         return ResponseEntity.ok(taskService.updateTaskToDone(taskId));
     }
 
-    @GetMapping("/getCompetitionSummary")
-    public ResponseEntity<String> getCompetitionSummary(@RequestParam  Long taskId) {
-        return ResponseEntity.ok(taskService.getCompetitionSummary(taskId));
+    @GetMapping("/getCompletionSummary")
+    public ResponseEntity<String> getCompletionSummary(@RequestParam  Long taskId) {
+        return ResponseEntity.ok(taskService.getCompletionSummary(taskId));
     }
 
     @GetMapping("/getProgressSummary")

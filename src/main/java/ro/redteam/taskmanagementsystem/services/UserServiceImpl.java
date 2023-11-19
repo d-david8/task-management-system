@@ -89,8 +89,13 @@ public class UserServiceImpl implements UserService {
                 if (!newUserDTO.getEmail().isEmpty()) {
                     user.setEmail(newUserDTO.getEmail());
                 }
-                userRepository.save(user);
-                return objectMapper.convertValue(user, UserDTO.class);
+                User userResponseEntity = userRepository.save(user);
+                UserDTO userResponse = new UserDTO();
+                userResponse.setId(userResponseEntity.getId());
+                userResponse.setFirstName(userResponseEntity.getFirstName());
+                userResponse.setLastName(userResponseEntity.getLastName());
+                userResponse.setEmail(userResponseEntity.getEmail());
+                return userResponse;
             } catch (DataIntegrityViolationException e) {
                 throw new DataExistsException("Invalid email");
             }
