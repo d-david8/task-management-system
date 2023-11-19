@@ -55,8 +55,21 @@ public class TaskController {
         return ResponseEntity.ok(taskService.updateProgress(updateProgressRequestDTO));
     }
 
-    @PutMapping("updateToDone/{taskId}")
+    @PutMapping("/updateToDone/{taskId}")
     public ResponseEntity<TaskResponseDTO> updateProgress(@PathVariable Long taskId) {
         return ResponseEntity.ok(taskService.updateTaskToDone(taskId));
     }
+
+    @GetMapping("/getCompetitionSummary")
+    public ResponseEntity<String> getCompetitionSummary(@RequestParam  Long taskId) {
+        return ResponseEntity.ok(taskService.getCompetitionSummary(taskId));
+    }
+
+    @GetMapping("/getProgressSummary")
+    public ResponseEntity<String> getProgressSummary(@RequestParam  Long taskId) {
+        return ResponseEntity.ok(taskService.getProgressSummary(taskId));
+    }
+
+
+
 }
