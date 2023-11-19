@@ -134,6 +134,24 @@ public class TaskServiceImpl implements TaskService {
         return mapTaskToTaskResponseDTO(taskRepository.save(taskEntity));
     }
 
+    @Override
+    public String getCompetitionSummary(Long taskId) {
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+        if (taskOptional.isEmpty()) {
+            throw new DataNotFoundException("Invalid task id!");
+        }
+        return "Status: " + taskOptional.get().getStatus().toString();
+    }
+
+    @Override
+    public String getProgressSummary(Long taskId) {
+        Optional<Task> taskOptional = taskRepository.findById(taskId);
+        if (taskOptional.isEmpty()) {
+            throw new DataNotFoundException("Invalid task id!");
+        }
+        return "Progress: " + taskOptional.get().getProgress() + "%";
+    }
+
     private TaskResponseDTO mapTaskToTaskResponseDTO(Task task) {
         TaskResponseDTO taskResponseDTO = new TaskResponseDTO();
 

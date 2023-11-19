@@ -22,4 +22,8 @@ public interface TaskService {
     TaskResponseDTO updateProgress(UpdateProgressRequestDTO updateProgressRequestDTO);
 
     TaskResponseDTO updateTaskToDone(Long taskId);
+
+    String getCompetitionSummary(Long taskId);
+
+    String getProgressSummary(Long taskId);
 }
